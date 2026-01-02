@@ -1,0 +1,29 @@
+-             - name: Set up miniconda
+  uses: conda-incubator/setup-miniconda@v2
+  with:
+    python-version: 3.10
+    auto-update-conda: true
+- name: Create or update environment from file if present
+  run: |
+    if [ -f environment.yml ]; then
+      mamba env update --file environment.yml --name test-env || conda env update --file environment.yml --name test-env
+    else
+      conda create -y -n test-env python=3.10 flake8 pytest
+    fi
+- name: Activate environment
+  shell: bash -l {0}
+  run: |
+    source activate test-env
+    python --version- name: Install dependencies
+  run: |
+    if [ -f environment.yml ]; then
+      echo "Found environment.yml — updating base environment"
+      conda env update --file environment.yml --name base
+    else
+      echo "environment.yml not found — installing minimal deps"
+      conda install -y python=3.10 flake8 pytest
+    finame: base
+dependencies:
+  - python=3.10
+  - flake8
+  - pytest
